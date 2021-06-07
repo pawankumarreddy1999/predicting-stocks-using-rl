@@ -43,7 +43,7 @@ class stockEnv(gym.Env):
         if (self.current_state_index)==len(self.df_xy)-1:
             self.episode_over = True
 
-        return self.ob, self.reward, self.episode_over, {}
+        return self.ob, self.reward, self.episode_over
 
     def reset(self):
         """
@@ -85,25 +85,25 @@ class stockEnv(gym.Env):
         if predicted_action == action_buy:  # buy
             # print('Open: {}'.format(self.df.loc[self.current_step, 'Open']),'Price : {}'.format(self.df.loc[self.current_step, 'Price']))
             if (df.loc[self.current_state_index, 'Open'] < df.loc[self.current_state_index, 'Price']):
-                self.result_buy.append(df.loc[self.current_state_index, 'Date'])
-                self.result.append(df.loc[self.current_state_index, 'Date'])
+                self.result_buy.append(self.current_state_index)
+                #self.result.append(df.loc[self.current_state_index, 'Date'])
                 reward=1
             else:
-                reward=-1
+                reward=0
                 # print(self.df.iloc[self.current_step])
                 # print('step number is: {}'.format(self.current_step),'action is: {}'.format(action),'Date: {}'.format(self.df.loc[self.current_step, 'Date']),'BUY')
         if predicted_action == action_sell:  # sell
             # print('Open: {}'.format(self.df.loc[self.current_step, 'Open']),'Price : {}'.format(self.df.loc[self.current_step, 'Price']))
             if (df.loc[self.current_state_index, 'Open'] > df.loc[self.current_state_index, 'Price']):
-                self.result_sell.append(df.loc[self.current_state_index, 'Date'])
-                self.result.append(df.loc[self.current_state_index, 'Date'])
+                self.result_sell.append(self.current_state_index)
+                #self.result.append(df.loc[self.current_state_index, 'Date'])
                 reward=1
             else:
-                reward=-1
+                reward=0
 
                 # print('step number is: {}'.format(self.current_step),'action is: {}'.format(action),'Date: {}'.format(self.df.loc[self.current_step, 'Date']),'SELL')
         self.sum_rewards += reward
-        return self.result
+        return self.sum_rewards,self.result_buy,self.result_sell
 
     def _get_next_state(self):
         """
